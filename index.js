@@ -1,34 +1,255 @@
-
-
-
-function setup () {
-  let firstCard = undefined
-  let secondCard = undefined
-  $(".card").on(("click"), function () {
-    $(this).toggleClass("flip");
-
-    if (!firstCard)
-      firstCard = $(this).find(".front_face")[0]
-    else {
-      secondCard = $(this).find(".front_face")[0]
-      console.log(firstCard, secondCard);
-      if (
-        firstCard.src
-        ==
-        secondCard.src
-      ) {
-        console.log("match")
-        $(`#${firstCard.id}`).parent().off("click")
-        $(`#${secondCard.id}`).parent().off("click")
-      } else {
-        console.log("no match")
-        setTimeout(() => {
-          $(`#${firstCard.id}`).parent().toggleClass("flip")
-          $(`#${secondCard.id}`).parent().toggleClass("flip")
-        }, 1000)
-      }
-    }
-  });
+/* Difficulty settings  */
+const DIFFICULTIES = {
+  easy:   { pairs: 3,  time: 60  },
+  medium: { pairs: 6,  time: 90  },
+  hard:   { pairs: 10, time: 120 },
 }
 
-$(document).ready(setup)
+/* Game variables */
+let firstCard   = undefined
+let secondCard  = undefined
+let lockBoard   = false
+
+let numClicks   = 0
+let numMatched  = 0
+let totalPairs  = 0
+let timeLeft    = 0
+let timerID     = undefined
+let gameStarted = false
+
+let difficulty  = "easy"
+let peekUsed    = false
+
+
+/* Status bar functions */
+function updateStatus () {
+  $("#num_clicks").text(numClicks)
+  $("#num_matched").text(numMatched)
+  $("#num_left").text(totalPairs - numMatched)
+  $("#num_total").text(totalPairs)
+}
+
+function updateTimer () {
+  const mins = String(Math.floor(timeLeft / 60)).padStart(2, "0")
+  const secs = String(timeLeft % 60).padStart(2, "0")
+  $("#time_left").text(mins + ":" + secs).toggleClass("warning", timeLeft <= 10)
+}
+
+
+/* Timer  */
+function startTimer () {
+  clearInterval(timerID)
+  updateTimer()
+  timerID = setInterval(function () {
+    timeLeft--
+    updateTimer()
+    if (timeLeft <= 0) {
+      clearInterval(timerID)
+      endGame(false)
+    }
+  }, 1000)
+}
+
+function stopTimer () {
+  clearInterval(timerID)
+}
+
+
+/* Fetching the pokemon */
+async function getRandomPokemon (numPairs) {
+  const res  = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025")
+  const data = await res.json()
+
+  const picked = data.results
+    .sort(() => Math.random() - 0.5)
+    .slice(0, numPairs)
+
+  return Promise.all(picked.map(async function (p) {
+    const d = await (await fetch(p.url)).json()
+    return { name: d.name, img: d.sprites.other["official-artwork"].front_default }
+  }))
+}
+
+
+/* Builds cards  */
+function buildCards (pokemonList) {
+  ;[...pokemonList, ...pokemonList]
+    .sort(() => Math.random() - 0.5)
+    .forEach(function (p) {
+      $("#game_grid").append(`
+        <div class="card">
+          <img class="front_face" src="${p.img}" alt="${p.name}" id="${p.name}_${Math.random()}">
+          <img class="back_face"  src="back.webp" alt="card back">
+        </div>
+      `)
+    })
+
+  $(".card").on("click", function () { flipCard($(this)) })
+}
+
+
+/* Flips cards */
+function flipCard ($card) {
+  if (lockBoard || !gameStarted)       return
+  if ($card.hasClass("matched"))       return
+  if ($card.hasClass("flip"))          return
+
+  numClicks++
+  updateStatus()
+  $card.addClass("flip")
+
+  if (!firstCard) {
+    firstCard = $card.find(".front_face")[0]
+    return
+  }
+
+  secondCard = $card.find(".front_face")[0]
+  lockBoard  = true
+
+  if (firstCard.src === secondCard.src) {
+    cardOf(firstCard).add(cardOf(secondCard)).addClass("matched").off("click")
+    numMatched++
+    updateStatus()
+    resetCards()
+    if (numMatched === totalPairs) {
+      stopTimer()
+      setTimeout(function () { endGame(true) }, 300)
+    }
+  } else {
+    const a = firstCard, b = secondCard
+    resetCards()
+    setTimeout(function () { cardOf(a).add(cardOf(b)).removeClass("flip") }, 1000)
+  }
+}
+
+// returns the card div that owns a front_face img
+function cardOf (face) {
+  return $("#" + face.id).parent()
+}
+
+function resetCards () {
+  firstCard  = undefined
+  secondCard = undefined
+  lockBoard  = false
+}
+
+
+/* END GAME */
+function endGame (won) {
+  gameStarted = false
+  $("#btn_peek").prop("disabled", true)
+
+  if (won) {
+    showMessage("You Win! " + numClicks + " clicks — " + totalPairs + " pairs matched!", "win")
+  } else {
+    lockBoard = true
+    $(".card:not(.matched)").addClass("flip").off("click")
+    setTimeout(function () { showMessage("Game Over! Time ran out.", "lose") }, 800)
+  }
+}
+
+function showMessage (text, type) {
+  $("#message").removeClass("win lose").text(text)
+  if (type) $("#message").addClass(type)
+}
+
+
+/* Start game */
+async function startGame () {
+  resetGame()
+
+  const cfg   = DIFFICULTIES[difficulty]
+  gameStarted = true
+  totalPairs  = cfg.pairs
+  timeLeft    = cfg.time
+  peekUsed    = false
+
+  updateStatus()
+  updateTimer()
+  $("#game_grid").toggleClass("hard", difficulty === "hard")
+  $("#btn_peek").prop("disabled", false).text("Peek")
+  $("#game_grid").html("<p style='padding:20px;color:#888'>Loading Pokemon...</p>")
+
+  try {
+    const pokemon = await getRandomPokemon(totalPairs)
+    $("#game_grid").empty()
+    buildCards(pokemon)
+    startTimer()
+  } catch (e) {
+    $("#game_grid").html("<p style='padding:20px;color:tomato'>Failed to load. Check connection.</p>")
+    gameStarted = false
+  }
+}
+
+
+/* reset the Game */
+function resetGame () {
+  stopTimer()
+  gameStarted = numClicks = numMatched = totalPairs = timeLeft = 0
+  firstCard   = secondCard = undefined
+  lockBoard   = peekUsed = false
+
+  $("#game_grid").empty().removeClass("hard")
+  $("#time_left").text("--:--").removeClass("warning")
+  $("#btn_peek").prop("disabled", true).text("Peek")
+  showMessage("", "")
+  updateStatus()
+}
+
+
+/* Peek button */
+function activatePeek () {
+  if (peekUsed || !gameStarted) return
+
+  peekUsed = true
+  $("#btn_peek").prop("disabled", true)
+
+  const $hidden = $(".card:not(.matched):not(.flip)").addClass("flip")
+
+  let count = 3
+  const id = setInterval(function () {
+    count--
+    $("#btn_peek").text(count > 0 ? "Peek (" + count + "s)" : "Peek used")
+    if (count <= 0) {
+      clearInterval(id)
+      $hidden.not(".matched").removeClass("flip")
+    }
+  }, 1000)
+}
+
+/*Dark theme */
+function setTheme (theme) {
+  $("body").toggleClass("dark", theme === "dark")
+  $(".theme_btn").removeClass("active")
+  $("#btn_" + theme).addClass("active")
+}
+
+
+/* setting the difficulty */
+function setDifficulty (d) {
+  difficulty = d
+  $(".diff_btn").removeClass("active")
+  $("#btn_" + d).addClass("active")
+  if (gameStarted) startGame()
+}
+
+
+/* DOCUMENTS  */
+$(document).ready(function () {
+
+  // one loop for all 3 difficulty buttons
+  Object.keys(DIFFICULTIES).forEach(function (d) {
+    $("#btn_" + d).on("click", function () { setDifficulty(d) })
+  })
+
+  // one loop for both theme buttons
+  ;["light", "dark"].forEach(function (t) {
+    $("#btn_" + t).on("click", function () { setTheme(t) })
+  })
+
+  $("#btn_start").on("click", startGame)
+  $("#btn_reset").on("click", resetGame)
+  $("#btn_peek").on("click",  activatePeek)
+
+  updateStatus()
+})
