@@ -13,32 +13,41 @@
 </head>
 
 <body>
-  <div id="game_grid">
-    <div class="card">
-      <img id="img1" class="front_face" src="001.png" alt="">
-      <img class="back_face" src="back.webp" alt="">
+  <!-- Function bar -->
+  <div id="header">
+
+    <!-- Status -->
+    <div id="status">
+      <span>Clicks: <strong id="stat-clicks">0</strong></span>
+      <span>Time: <strong id="stat-timer">--:--</strong></span>
+      <span>Matched: <strong id="stat-matched">0</strong></span>
+      <span>Pairs Left: <strong id="stat-left">0</strong></span>
+      <span>Total Pairs: <strong id="stat-total">0</strong></span>
     </div>
-    <div class="card">
-      <img id="img2" class="front_face" src="002.png" alt="">
-      <img class="back_face" src="back.webp" alt="">
-    </div>
-    <div class="card">
-      <img id="img3" class="front_face" src="003.png" alt="">
-      <img class="back_face" src="back.webp" alt="">
-    </div>
-    <div class="card">
-      <img id="img4" class="front_face" src="001.png" alt="">
-      <img class="back_face" src="back.webp" alt="">
-    </div>
-    <div class="card">
-      <img id="img5" class="front_face" src="002.png" alt="">
-      <img class="back_face" src="back.webp" alt="">
-    </div>
-    <div class="card">
-      <img id="img6" class="front_face" src="003.png" alt="">
-      <img class="back_face" src="back.webp" alt="">
+
+    <!-- controls -->
+    <div id="controls">
+      <span>Difficulty:</span>
+      <button class="btn diff-btn active" id="diff-easy">Easy</button>
+      <button class="btn diff-btn" id="diff-medium">Medium</button>
+      <button class="btn diff-btn" id="diff-hard">Hard</button>
+
+      <span style="margin-left:12px;">Theme:</span>
+      <button class="btn theme-btn active" id="theme-light">Light</button>
+      <button class="btn theme-btn" id="theme-dark">Dark</button>
+ 
+      <button class="btn action-btn" id="btn-start">Start</button>
+      <button class="btn action-btn" id="btn-reset">Reset</button>
+      <button class="btn peek-btn" id="btn-powerup" disabled>Peek</button>
     </div>
   </div>
+
+  <!--Ending message-->
+  <div id="message" class="hidden"></div>
+
+  <!--Game containter-->
+  <div id="pokemon_grid"></div>
+
 </body>
 
 </html>
