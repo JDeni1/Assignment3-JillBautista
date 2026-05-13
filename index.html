@@ -1,53 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Memory Game</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+  </head>
+  <body>
+    <!-- Function bar -->
+    <div id="header">
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- import jQuery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="index.js"></script>
-</head>
+      <!-- Status -->
+      <div id="status">
+        <span>Clicks: <strong id="num_clicks">0</strong></span>
+        <span>Time: <strong id="time_left">--:--</strong></span>
+        <span>Matched: <strong id="num_matched">0</strong></span>
+        <span>Pairs Left: <strong id="num_left">0</strong></span>
+        <span>Total Pairs: <strong id="num_total">0</strong></span>
+      </div>
 
-<body>
-  <!-- Function bar -->
-  <div id="header">
+      <!-- controls -->
+      <div id="controls">
+        <span>Difficulty:</span>
+        <button class="btn diff_btn active" id="btn_easy">Easy</button>
+        <button class="btn diff_btn" id="btn_medium">Medium</button>
+        <button class="btn diff_btn" id="btn_hard">Hard</button>
 
-    <!-- Status -->
-    <div id="status">
-      <span>Clicks: <strong id="stat-clicks">0</strong></span>
-      <span>Time: <strong id="stat-timer">--:--</strong></span>
-      <span>Matched: <strong id="stat-matched">0</strong></span>
-      <span>Pairs Left: <strong id="stat-left">0</strong></span>
-      <span>Total Pairs: <strong id="stat-total">0</strong></span>
+        <!--Game theme-->
+        <span>Theme:</span>
+        <button class="btn theme_btn active" id="btn_light">Light</button>
+        <button class="btn theme_btn" id="btn_dark">Dark</button>
+
+        <button class="btn" id="btn_start">Start</button>
+        <button class="btn" id="btn_reset">Reset</button>
+        <button class="btn" id="btn_peek" disabled>Peek</button>
+      </div>
+
     </div>
 
-    <!-- controls -->
-    <div id="controls">
-      <span>Difficulty:</span>
-      <button class="btn diff-btn active" id="diff-easy">Easy</button>
-      <button class="btn diff-btn" id="diff-medium">Medium</button>
-      <button class="btn diff-btn" id="diff-hard">Hard</button>
+    <!--Ending message-->
+    <div id="message"></div>
 
-      <span style="margin-left:12px;">Theme:</span>
-      <button class="btn theme-btn active" id="theme-light">Light</button>
-      <button class="btn theme-btn" id="theme-dark">Dark</button>
- 
-      <button class="btn action-btn" id="btn-start">Start</button>
-      <button class="btn action-btn" id="btn-reset">Reset</button>
-      <button class="btn peek-btn" id="btn-powerup" disabled>Peek</button>
-    </div>
-  </div>
+    <!--Game containter-->
+    <div id="game_grid"></div>
 
-  <!--Ending message-->
-  <div id="message" class="hidden"></div>
-
-  <!--Game containter-->
-  <div id="pokemon_grid"></div>
-
-</body>
-
+  </body>
 </html>
