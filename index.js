@@ -97,46 +97,50 @@ function flipCard ($card) {
   numClicks++
   updateStatus()
   $card.addClass("flip")
-  lockBoard = true          
+  lockBoard = true           // lock immediately so no 3rd is pressed 
 
   if (!firstCard) {
     firstCard = $card.find(".front_face")[0]
-    lockBoard = false         
+    lockBoard = false         // unlock
     return
   }
 
   secondCard = $card.find(".front_face")[0]
-  // lockBoard stays true while we evaluate the pair
+  // lockBoard stays true while evaluating
 
   if (firstCard.src === secondCard.src) {
+    // match 
     cardOf(firstCard).add(cardOf(secondCard)).addClass("matched").off("click")
     numMatched++
     updateStatus()
-    resetCards()
+    firstCard  = undefined
+    secondCard = undefined
+    lockBoard  = false
     if (numMatched === totalPairs) {
       stopTimer()
       setTimeout(function () { endGame(true) }, 300)
     }
   } else {
-    const a = firstCard, b = secondCard
-    resetCards()
-    setTimeout(function () { cardOf(a).add(cardOf(b)).removeClass("flip") }, 1000)
+    // no match 
+    const a = firstCard
+    const b = secondCard
+    firstCard  = undefined
+    secondCard = undefined
+    setTimeout(function () {
+      cardOf(a).removeClass("flip")
+      cardOf(b).removeClass("flip")
+      lockBoard = false       // unlock only AFTER cards have flipped back
+    }, 1000)
   }
 }
 
-/* Returns the card div that owns a front_face img */
+/* Returns the card div that has the back of pokeball*/
 function cardOf (face) {
   return $("#" + face.id).parent()
 }
 
-function resetCards () {
-  firstCard  = undefined
-  secondCard = undefined
-  lockBoard  = false
-}
 
-
-/* End game — won=true for win, won=false for lose */
+/* End game */
 function endGame (won) {
   gameStarted = false
   $("#btn_peek").prop("disabled", true)
@@ -240,12 +244,10 @@ function setDifficulty (d) {
 /* Document ready */
 $(document).ready(function () {
 
-  // one loop for all 3 difficulty buttons
   Object.keys(DIFFICULTIES).forEach(function (d) {
     $("#btn_" + d).on("click", function () { setDifficulty(d) })
   })
 
-  // one loop for both theme buttons
   ;["light", "dark"].forEach(function (t) {
     $("#btn_" + t).on("click", function () { setTheme(t) })
   })
