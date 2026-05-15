@@ -136,9 +136,8 @@ function flipCard ($card) {
 
 /* Returns the card div that has the back of pokeball*/
 function cardOf (face) {
-  return $("#" + face.id).parent()
+  return $(document.getElementById(face.id)).parent()
 }
-
 
 /* End game */
 function endGame (won) {
