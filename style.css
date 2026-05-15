@@ -5,12 +5,10 @@ body {
   background: #ffffff;
   color: #111111;
 }
-
 body.dark {
   background: #1a1a2e;
   color: #dddddd;
 }
-
 /* Header */
 #header {
   width: 620px;
@@ -19,7 +17,6 @@ body.dark {
   flex-direction: column;
   gap: 8px;
 }
-
 /* Status Bar */
 #status {
   display: flex;
@@ -30,29 +27,23 @@ body.dark {
   border-radius: 4px;
   background: #f5f5f5;
 }
-
 body.dark #status {
   background: #16213e;
   border-color: #444444;
   color: #dddddd;
 }
-
 #time_left {
   color: #cc0000;
 }
-
 body.dark #time_left {
   color: #ff6b6b;
 }
-
 #time_left.warning {
   animation: blink 0.6s step-end infinite;
 }
-
 @keyframes blink {
   50% { opacity: 0.2; }
 }
-
 /*Control Bar  */
 #controls {
   display: flex;
@@ -60,7 +51,6 @@ body.dark #time_left {
   gap: 6px;
   flex-wrap: wrap;
 }
-
 /* Buttons*/
 .btn {
   padding: 5px 12px;
@@ -71,40 +61,33 @@ body.dark #time_left {
   color: #111111;
   cursor: pointer;
 }
-
 .btn:hover:not(:disabled) {
   background: #d4d4d4;
 }
-
 .btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
-
 body.dark .btn {
   background: #2a2a4a;
   border-color: #555555;
   color: #dddddd;
 }
-
 body.dark .btn:hover:not(:disabled) {
   background: #3a3a6a;
 }
-
 /* difficulty active */
 .diff_btn.active {
   background: tomato;
   color: #ffffff;
   border-color: tomato;
 }
-
 /* theme active */
 .theme_btn.active {
   background: #444444;
   color: #ffffff;
   border-color: #444444;
 }
-
 /* start / reset */
 #btn_start, #btn_reset {
   background: #3a7bd5;
@@ -112,22 +95,18 @@ body.dark .btn:hover:not(:disabled) {
   border-color: #3a7bd5;
   font-weight: bold;
 }
-
 #btn_start:hover, #btn_reset:hover {
   background: #2a6bc5;
 }
-
 /* peek */
 #btn_peek {
   background: #7b2fbe;
   color: #ffffff;
   border-color: #7b2fbe;
 }
-
 #btn_peek:hover:not(:disabled) {
   background: #6a1fad;
 }
-
 /* Message */
 #message {
   width: 620px;
@@ -139,35 +118,31 @@ body.dark .btn:hover:not(:disabled) {
   border-radius: 4px;
   display: none;
 }
-
 #message.win {
   display: block;
   background: #d4edda;
   border: 2px solid #28a745;
   color: #155724;
 }
-
 #message.lose {
   display: block;
   background: #f8d7da;
   border: 2px solid #dc3545;
   color: #721c24;
 }
-
 body.dark #message.win {
   background: #1a3a2a;
   color: #7ee8a2;
   border-color: #28a745;
 }
-
 body.dark #message.lose {
   background: #3a1a1a;
   color: #f5a0a8;
   border-color: #dc3545;
 }
-
 /* Game Grid */
 #game_grid {
+  perspective: 1000px;
   border: 2px tomato solid;
   width: 620px;
   margin: auto;
@@ -175,7 +150,6 @@ body.dark #message.lose {
   flex-wrap: wrap;
   align-items: flex-start;
 }
-
 /* Cards */
 .card {
   width: 33.33%;
@@ -183,10 +157,8 @@ body.dark #message.lose {
   position: relative;
   cursor: pointer;
   transition: transform 1s;
-  perspective: 1000px;
   transform-style: preserve-3d;
 }
-
 .front_face,
 .back_face {
   position: absolute;
@@ -197,21 +169,17 @@ body.dark #message.lose {
   backface-visibility: hidden;
   object-fit: contain;
 }
-
 .front_face {
   transform: rotateY(180deg);
 }
-
 .flip {
   transform: rotateY(180deg);
 }
-
 /* matched cards get a green border */
 .card.matched .front_face {
   outline: 3px solid #28a745;
   outline-offset: -3px;
 }
-
 /* hard mode: 5 columns, cards still square */
 #game_grid.hard .card {
   width: 20%;
