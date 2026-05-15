@@ -1,4 +1,3 @@
-/* ── base ───────────────────────────────────── */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -21,7 +20,7 @@ body.dark {
   gap: 8px;
 }
 
-/* Status Bar*/
+/* Status Bar */
 #status {
   display: flex;
   gap: 20px;
@@ -54,7 +53,7 @@ body.dark #time_left {
   50% { opacity: 0.2; }
 }
 
-/* Control Bar*/
+/*Control Bar  */
 #controls {
   display: flex;
   align-items: center;
@@ -129,7 +128,7 @@ body.dark .btn:hover:not(:disabled) {
   background: #6a1fad;
 }
 
-/* Message*/
+/* Message */
 #message {
   width: 620px;
   margin: 6px auto;
@@ -171,15 +170,16 @@ body.dark #message.lose {
 #game_grid {
   border: 2px tomato solid;
   width: 620px;
-  min-height: 200px;       
   margin: auto;
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
 }
 
 /* Cards */
 .card {
   width: 33.33%;
+  padding-top: 33.33%;
   position: relative;
   cursor: pointer;
   transition: transform 1s;
@@ -187,16 +187,15 @@ body.dark #message.lose {
   transform-style: preserve-3d;
 }
 
-img {
-  width: 100%;
-  display: block;
-}
-
 .front_face,
 .back_face {
   position: absolute;
-  backface-visibility: hidden;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  object-fit: contain;
 }
 
 .front_face {
@@ -213,7 +212,8 @@ img {
   outline-offset: -3px;
 }
 
-/* hard mode: 5 columns */
+/* hard mode: 5 columns, cards still square */
 #game_grid.hard .card {
   width: 20%;
+  padding-top: 20%;
 }

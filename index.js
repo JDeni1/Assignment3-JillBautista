@@ -1,4 +1,4 @@
-/* Difficulty settings  */
+/* Difficulty settings */
 const DIFFICULTIES = {
   easy:   { pairs: 3,  time: 60  },
   medium: { pairs: 6,  time: 90  },
@@ -21,7 +21,7 @@ let difficulty  = "easy"
 let peekUsed    = false
 
 
-/* Status bar functions */
+/* Status bar */
 function updateStatus () {
   $("#num_clicks").text(numClicks)
   $("#num_matched").text(numMatched)
@@ -36,7 +36,7 @@ function updateTimer () {
 }
 
 
-/* Timer  */
+/* Timer */
 function startTimer () {
   clearInterval(timerID)
   updateTimer()
@@ -55,7 +55,7 @@ function stopTimer () {
 }
 
 
-/* Fetching the pokemon */
+/* Fetch pokemon from API */
 async function getRandomPokemon (numPairs) {
   const res  = await fetch("https://pokeapi.co/api/v2/pokemon?limit=1025")
   const data = await res.json()
@@ -71,7 +71,7 @@ async function getRandomPokemon (numPairs) {
 }
 
 
-/* Builds cards  */
+/* Build cards */
 function buildCards (pokemonList) {
   ;[...pokemonList, ...pokemonList]
     .sort(() => Math.random() - 0.5)
@@ -88,23 +88,25 @@ function buildCards (pokemonList) {
 }
 
 
-/* Flips cards */
+/* Flip card logic */
 function flipCard ($card) {
-  if (lockBoard || !gameStarted)       return
-  if ($card.hasClass("matched"))       return
-  if ($card.hasClass("flip"))          return
+  if (lockBoard || !gameStarted)  return
+  if ($card.hasClass("matched"))  return
+  if ($card.hasClass("flip"))     return
 
   numClicks++
   updateStatus()
   $card.addClass("flip")
+  lockBoard = true          
 
   if (!firstCard) {
     firstCard = $card.find(".front_face")[0]
+    lockBoard = false         
     return
   }
 
   secondCard = $card.find(".front_face")[0]
-  lockBoard  = true
+  // lockBoard stays true while we evaluate the pair
 
   if (firstCard.src === secondCard.src) {
     cardOf(firstCard).add(cardOf(secondCard)).addClass("matched").off("click")
@@ -122,7 +124,7 @@ function flipCard ($card) {
   }
 }
 
-// returns the card div that owns a front_face img
+/* Returns the card div that owns a front_face img */
 function cardOf (face) {
   return $("#" + face.id).parent()
 }
@@ -134,7 +136,7 @@ function resetCards () {
 }
 
 
-/* END GAME */
+/* End game — won=true for win, won=false for lose */
 function endGame (won) {
   gameStarted = false
   $("#btn_peek").prop("disabled", true)
@@ -182,7 +184,7 @@ async function startGame () {
 }
 
 
-/* reset the Game */
+/* Reset game */
 function resetGame () {
   stopTimer()
   gameStarted = numClicks = numMatched = totalPairs = timeLeft = 0
@@ -197,7 +199,7 @@ function resetGame () {
 }
 
 
-/* Peek button */
+/* Peek power-up */
 function activatePeek () {
   if (peekUsed || !gameStarted) return
 
@@ -217,7 +219,8 @@ function activatePeek () {
   }, 1000)
 }
 
-/*Dark theme */
+
+/* Theme */
 function setTheme (theme) {
   $("body").toggleClass("dark", theme === "dark")
   $(".theme_btn").removeClass("active")
@@ -225,7 +228,7 @@ function setTheme (theme) {
 }
 
 
-/* setting the difficulty */
+/* Difficulty */
 function setDifficulty (d) {
   difficulty = d
   $(".diff_btn").removeClass("active")
@@ -234,7 +237,7 @@ function setDifficulty (d) {
 }
 
 
-/* DOCUMENTS  */
+/* Document ready */
 $(document).ready(function () {
 
   // one loop for all 3 difficulty buttons
